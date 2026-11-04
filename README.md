@@ -12,6 +12,19 @@ repo's `supabase/migrations/20261027000000_prompt_chain_and_signup_tables.sql`.
 Every route is behind Google sign-in **and** `profiles.is_superadmin = TRUE`, using the same gate as
 the admin app (`src/proxy.ts` → `src/lib/dal.ts`).
 
+## Features
+
+- **Prompt chains** (`/`): list, create; rename, edit description, delete on each chain's page.
+- **Steps** (`/chains/[id]`): add, edit (model, temperature, system and user prompts), delete,
+  and reorder with ↑/↓. Step 1 receives the image; each later step's `{input}` is the previous
+  step's output. Deleting a step renumbers the rest.
+- **Generate**: upload a test image (or text) and run the chain, with every step's output shown.
+  Runs are logged exactly like the original app's (`src/lib/run-chain.ts` is a port of its
+  `src/lib/prompt-chain.ts`) with `caption_requests.kind = 'test'`, and test images are stored
+  non-public so they never reach the feed.
+- **Media** (`/chains/[id]/media`): everything the chain produced, from both test runs and real
+  captions the original app generated with it.
+
 ## Setup
 
 1. `cp .env.example .env.local` and fill in the same Supabase values as the admin app.
